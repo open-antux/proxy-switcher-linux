@@ -1,3 +1,5 @@
+#!/bin/sh/env python3
+
 import os
 import urllib.request
 #from bs4 import BeautifulSoup as bs
