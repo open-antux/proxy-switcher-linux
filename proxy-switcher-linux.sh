@@ -4,6 +4,8 @@ function start {
 	export {http,https,ftp,rsync}_proxy="http://$ipaddr:$port"
 	export no_proxy="localhost, 127.0.0.1"
 
+	echo -e '\033[1;32mExported {http,https,ftp,rsync}_proxy variable'
+
 	#Setup proxy with socks
 	cat /etc/tsocks.conf &> /dev/null
 	if [[ $? != 1 ]]
@@ -11,6 +13,8 @@ function start {
 		mv /etc/tsocks.conf /etc/tsocks.conf.back
 		echo "server = $ipaddr" > /etc/tsocks.conf
 		echo "server_port = $port" >> /etc/tsocks.conf
+
+		echo -e '\033[1;32mSetted server and server_port on tsocks.conf file'		
 	fi
 
 	#Setup proxy with gsettings
@@ -27,11 +31,20 @@ function start {
 		gsettings set org.gnome.system.proxy.ftp port "$port"
 		
 		gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', '10.0.0.0/8', '192.168.0.0/16', '172.16.0.0/12' , '*.localdomain.com' ]"
+		
+		echo -e '\033[1;32mSetted proxy with GNOME'
 	fi
 }
 
 function stop {
 	unset {http,https,ftp,rsync,no}_proxy
+
+	if [[ $(echo ${http,https,ftp,rsync,no}_proxy) != '' ]]
+	then
+		echo -e '\033[1;31mUnset the variables unsuccessfully'
+	else
+		echo -e '\033[1;32mUnset the variables successfully'
+	fi 2> /dev/null
 
 	#Restore /etc/tsocks.conf
 	cat /etc/tsocks.conf.back &> /dev/null
@@ -39,6 +52,8 @@ function stop {
 	then
 		rm /etc/tsocks.conf
 		mv /etc/tsocks.conf.back /etc/tsocks.conf
+	
+		echo -e '\033[1;32mRestored tsocks.conf file'
 	fi
 
 	#Restore gsettings
@@ -48,6 +63,9 @@ function stop {
 		if [[ $mode == 'manual' ]]
 		then
 			gsettings set org.gnome.system.proxy mode 'none'
+			echo -e '\033[1;32mRestored GNOME settings'
+		else
+			echo -e '\033[1;31mError to restoring GNOME settings'
 		fi
 	fi
 }
