@@ -6,7 +6,7 @@ function start {
 
 	#Setup proxy with socks
 	cat /etc/tsocks.conf &> /dev/null
-	if [[ $? != 1  ]]
+	if [[ $? != 1 ]]
 	then
 		mv /etc/tsocks.conf /etc/tsocks.conf.back
 		echo "server = $ipaddr" > /etc/tsocks.conf
@@ -35,7 +35,7 @@ function stop {
 
 	#Restore /etc/tsocks.conf
 	cat /etc/tsocks.conf.back &> /dev/null
-	if [[ $? != 1]]
+	if [[ $? != 1 ]]
 	then
 		rm /etc/tsocks.conf
 		mv /etc/tsocks.conf.back /etc/tsocks.conf
@@ -43,8 +43,9 @@ function stop {
 
 	#Restore gsettings
 	if [[ $XDG_CURRENT_DESKTOP == "GNOME" ]]
-	then
-		if [[ $(gsettings get org.gnome.system.proxy mode) == 'manual' ]]
+	then		
+		mode=$(echo $(gsettings get org.gnome.system.proxy mode))
+		if [[ $mode == 'manual' ]]
 		then
 			gsettings set org.gnome.system.proxy mode 'none'
 		fi
