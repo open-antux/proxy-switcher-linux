@@ -8,8 +8,9 @@ function start {
 	cat /etc/tsocks.conf &> /dev/null
 	if [[ $? != 1  ]]
 	then
-		echo "server = $ipaddr" > /etc/tsocks
-		echo "server_port = $port" >> /etc/tsocks
+		mv /etc/tsocks.conf /etc/tsocks.conf.back
+		echo "server = $ipaddr" > /etc/tsocks.conf
+		echo "server_port = $port" >> /etc/tsocks.conf
 	fi
 
 	#Setup proxy with gsettings
@@ -29,6 +30,26 @@ function start {
 	fi
 }
 
+function stop {
+	unset {http,https,ftp,rsync,no}_proxy
+
+	#Restore /etc/tsocks.conf
+	cat /etc/tsocks.conf.back &> /dev/null
+	if [[ $? != 1]]
+	then
+		rm /etc/tsocks.conf
+		mv /etc/tsocks.conf.back /etc/tsocks.conf
+	fi
+
+	#Restore gsettings
+	if [[ $XDG_CURRENT_DESKTOP == "GNOME" ]]
+	then
+		if [[ $(gsettings get org.gnome.system.proxy mode) == 'manual' ]]
+		then
+			gsettings set org.gnome.system.proxy mode 'none'
+		fi
+	fi
+}
 
 if [[ $1 != "" ]]
 then
