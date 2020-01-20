@@ -74,8 +74,7 @@ ipaddr=$1
 if [[ $(echo ${ipaddr} | grep -E -o "([0-9]{1,3}\.){3}[0-9]{1,3}" ) != "" ]]
 then
 	stop #Stop all proxy
-	ipaddr=$1
-
+	
 	if [[ $2 == "" ]]
 	then
 		port="8080"
