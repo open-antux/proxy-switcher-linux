@@ -1,5 +1,5 @@
 # proxy-switcher-linux
-Proxy switcher made in python3
+Proxy switcher made in shell
 
 # Usage
 Set as executable the file proxy-switcher-linux.sh:
